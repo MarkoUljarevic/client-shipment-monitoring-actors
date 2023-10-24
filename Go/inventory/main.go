@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -97,6 +98,7 @@ func NewInventoryActor() actor.Actor {
 }
 
 func CheckItemAvailability(itemId string, quantity int) (bool, *model.Item) {
+	fmt.Println("Quantity kod damixa je = ", quantity)
 	itemObjectId, err := primitive.ObjectIDFromHex(itemId)
 	if err != nil {
 		panic("Invalid item object id")

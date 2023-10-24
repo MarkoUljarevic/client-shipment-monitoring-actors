@@ -45,13 +45,13 @@ func CreateOrderService() *OrderService {
 }
 
 func (service *OrderService) Insert(order *model.Order) (id string, err error) {
-	createdId := service.db.Create(order)
+	createdId := service.db.Save(order)
 	if createdId.Error != nil {
 		log.Panic(createdId.Error.Error())
 		return "", createdId.Error
 	}
-
-	return fmt.Sprint(createdId), nil
+	fmt.Println("Order id je = " + fmt.Sprint(createdId))
+	return order.ID.String(), nil
 }
 
 func (service *OrderService) GetById(id string) (*model.Order, error) {
