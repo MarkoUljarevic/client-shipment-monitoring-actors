@@ -1,8 +1,7 @@
 package service
 
 import (
-	"fmt"
-	"github.com/AT-SmFoYcSNaQ/AT2023/Go/order/config"
+	"github.com/AT-SmFoYcSNaQ/AT2023/Go/customer/config"
 	"github.com/AT-SmFoYcSNaQ/AT2023/Go/order/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -16,7 +15,6 @@ type OrderService struct {
 }
 
 func CreateOrderService() *OrderService {
-	loadConfig, err := config.LoadConfig()
 
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags),
@@ -27,7 +25,12 @@ func CreateOrderService() *OrderService {
 			Colorful:                  true,
 		},
 	)
+	loadConfig, err := config.LoadConfig("./..")
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 	databaseURL := loadConfig.DatabaseURL
+
 	db, err := gorm.Open(postgres.Open(databaseURL+"&application_name=$ docs_simplecrud_gorm"), &gorm.Config{
 		Logger: newLogger,
 	})
@@ -50,7 +53,6 @@ func (service *OrderService) Insert(order *model.Order) (id string, err error) {
 		log.Panic(createdId.Error.Error())
 		return "", createdId.Error
 	}
-	fmt.Println("Order id je = " + fmt.Sprint(createdId))
 	return order.ID.String(), nil
 }
 

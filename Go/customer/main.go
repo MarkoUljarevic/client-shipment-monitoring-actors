@@ -50,14 +50,14 @@ func main() {
 	}(logger)
 	sugar := logger.Sugar()
 
-	loadConfig, err := config.LoadConfig(".")
+	loadConfig, err := config.LoadConfig("./..")
 	if err != nil {
 		sugar.Error(err.Error())
 	}
 
 	port := loadConfig.Port
 	if len(port) == 0 {
-		port = "9000"
+		port = "9876"
 	}
 	router := gin.Default()
 	router.Use(MiddlewareContentTypeSet())

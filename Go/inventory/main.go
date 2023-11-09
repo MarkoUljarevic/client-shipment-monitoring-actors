@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/AT-SmFoYcSNaQ/AT2023/Go/customer/config"
 	"log"
 	"os"
 	"os/signal"
@@ -98,7 +99,6 @@ func NewInventoryActor() actor.Actor {
 }
 
 func CheckItemAvailability(itemId string, quantity int) (bool, *model.Item) {
-	fmt.Println("Quantity kod damixa je = ", quantity)
 	itemObjectId, err := primitive.ObjectIDFromHex(itemId)
 	if err != nil {
 		panic("Invalid item object id")
@@ -150,12 +150,6 @@ func SeedItems() {
 }
 
 func main() {
-	port := 20001
-	port1 := 8098
-	if len(os.Args) >= 2 {
-		port, _ = strconv.Atoi(os.Args[1])
-		port1, _ = strconv.Atoi(os.Args[2])
-	}
 
 	system := actor.NewActorSystem()
 
@@ -163,9 +157,24 @@ func main() {
 		return &InventoryActor{}
 	})
 
-	remoteConfig := remote.Configure("192.168.1.13", port)
+	loadConfig, err := config.LoadConfig("./..")
+	if err != nil {
+		panic(err)
+	}
 
-	cp := automanaged.NewWithConfig(5*time.Second, port1, "192.168.1.13:8098", "192.168.1.13:9098", "192.168.1.13:10098")
+	port := 80104
+	port1 := 8098
+	if len(os.Args) >= 2 {
+		port, _ = strconv.Atoi(os.Args[1])
+		port1, _ = strconv.Atoi(os.Args[2])
+	}
+
+	remoteConfig := remote.Configure(loadConfig.ActorInventoryAddress, port)
+
+	cp := automanaged.NewWithConfig(5*time.Second, port1,
+		loadConfig.ActorInventoryAddress+":"+fmt.Sprint(loadConfig.ActorInventoryPort),
+		loadConfig.ActorInventoryAddress+":"+fmt.Sprint(loadConfig.ActorInventoryPort+1),
+		loadConfig.ActorInventoryAddress+":"+fmt.Sprint(loadConfig.ActorInventoryPort+2))
 	clusterKind := cluster.NewKind(
 		"inventory-actor",
 		actor.PropsFromProducer(NewInventoryActor),

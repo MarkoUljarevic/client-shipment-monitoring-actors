@@ -37,8 +37,13 @@ func main() {
 		socket.ServeWs(hub, c.Writer, c.Request, c.Param("userId"))
 	})
 
+	loadConfig, err := config.LoadConfig("./..")
+	if err != nil {
+		panic(err)
+	}
+
 	system := actor.NewActorSystem()
-	remoteConfig := remote.Configure("192.168.1.25", 8092)
+	remoteConfig := remote.Configure(loadConfig.ActorNotificationAddress, loadConfig.ActorNotificationPort)
 	remoting := remote.NewRemote(system, remoteConfig)
 	remoting.Start()
 	remoting.Register("notification-actor", actor.PropsFromProducer(func() actor.Actor {

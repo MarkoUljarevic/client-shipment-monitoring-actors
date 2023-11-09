@@ -63,7 +63,15 @@ func (actor *PaymentActor) sendPaymentInfo(paymentReq PaymentReq, isSuccessful b
 		AccountBalance: paymentReq.AccountBalance,
 	}
 
-	spawnResponse, err := actor.remoting.SpawnNamed("192.168.1.13:8090", "order-actor", "order-actor", time.Second)
+	loadConfig, err := config.LoadConfig("./..")
+	if err != nil {
+		panic(err)
+	}
+
+	spawnResponse, err := actor.remoting.SpawnNamed(loadConfig.ActorOrderAddress+":"+fmt.Sprint(loadConfig.ActorOrderPort),
+		"order-actor",
+		"order-actor",
+		time.Second)
 
 	if err != nil {
 		panic(err)
@@ -84,7 +92,10 @@ func (actor *PaymentActor) sendPaymentInfoNotification(paymentReq PaymentReq, is
 		paymentMessage = fmt.Sprintf("Payment for orderId %s was not successful,account balance did not change.", paymentReq.OrderId)
 	}
 
-	spawnResponse, err := actor.remoting.SpawnNamed("192.168.1.25:8092", "notification-actor", "notification-actor", time.Second)
+	spawnResponse, err := actor.remoting.SpawnNamed(loadConfig.ActorNotificationAddress+":"+fmt.Sprint(loadConfig.ActorNotificationPort),
+		"notification-actor",
+		"notification-actor",
+		time.Second)
 
 	messageContent := &messages.Message{
 		Content: paymentMessage,
@@ -108,9 +119,13 @@ func (actor *PaymentActor) sendPaymentInfoNotification(paymentReq PaymentReq, is
 func main() {
 
 	system := actor.NewActorSystem()
+	loadConfig, err := config.LoadConfig("./..")
+	if err != nil {
+		panic(err)
+	}
 
 	// Configure and start remote communication
-	remoteConfig := remote.Configure("192.168.1.34", 8093)
+	remoteConfig := remote.Configure(loadConfig.ActorPaymentAddress, loadConfig.ActorPaymentPort)
 	remoting := remote.NewRemote(system, remoteConfig)
 
 	remoting.Start()
@@ -125,27 +140,4 @@ func main() {
 	remoting.Register("payment-actor", paymentActorProps)
 
 	console.ReadLine()
-	//spawnResponse, err := remoting.SpawnNamed("192.168.1.25:8092", "notification-actor", "notification-actor", time.Second)
-	//
-	//if err != nil {
-	//	panic(err)
-	//	return
-	//}
-	//
-	//paymentMessage := "NOTIFICATIONNOTIFICATION"
-	//
-	//messageContent := &messages.Message{
-	//	Content: paymentMessage,
-	//	Action:  "",
-	//	OrderId: "",
-	//}
-	//
-	//message := &messages.Notification{
-	//	Message:    messageContent,
-	//	ReceiverId: "5a543ba3-9ee2-48f9-b3db-d85c443a1512",
-	//}
-	//
-	//spawnedPID := spawnResponse.Pid
-	//context.Send(spawnedPID, message)
-	//console.ReadLine()
 }

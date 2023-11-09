@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/AT-SmFoYcSNaQ/AT2023/Go/customer/config"
 	"time"
 
 	"github.com/AT-SmFoYcSNaQ/AT2023/Go/order/model"
@@ -27,7 +28,6 @@ func (actor *OrderActor) Receive(context actor.Context) {
 	// Handle incoming messages
 	switch msg := context.Message().(type) {
 	case *messages.ReceiveOrder_Request:
-		fmt.Println("Uslo u case")
 		// Received order from customer
 		order := model.Order{
 			UserId:         msg.UserId,
@@ -42,7 +42,6 @@ func (actor *OrderActor) Receive(context actor.Context) {
 		// Payment response from payment actor
 		actor.handlePaymentInfoReceived(msg) // Pass payment status and self reference
 	case *messages.EmptyMessage:
-		fmt.Println("Poruka od Marka : " + msg.Message)
 	}
 }
 
@@ -50,7 +49,6 @@ func (actor *OrderActor) handleOrderReceived(order *model.Order, self *actor.PID
 	fmt.Println("Received message from customer!")
 
 	orderCreated, err := actor.service.Insert(order)
-	fmt.Println("Kada je kreiran orderId je = " + orderCreated)
 	if err != nil {
 		return
 	}
@@ -84,18 +82,24 @@ func (actor *OrderActor) handleOrderReceived(order *model.Order, self *actor.PID
 func (actor *OrderActor) handleAvailabilityChecked(request *messages.CheckAvailability_Response) {
 	fmt.Println("Received message from inventory actor!")
 
-	// Spawn the notification actor
-	spawnResponse, err := actor.remoting.SpawnNamed("192.168.193.39:8092", "notification-actor", "notification-actor", time.Second*10)
+	loadConfig, err := config.LoadConfig("./..")
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("Order id je = " + request.OrderId)
+	// Spawn the notification actor
+	spawnResponse, err := actor.remoting.SpawnNamed(loadConfig.ActorNotificationAddress+":"+fmt.Sprint(loadConfig.ActorNotificationPort),
+		"notification-actor",
+		"notification-actor",
+		time.Second*10)
+	if err != nil {
+		panic(err)
+	}
+
 	orderUpdated, err := actor.service.GetById(request.OrderId)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Availability je = ", request.IsAvailable)
 	if request.IsAvailable {
 		// Item is available
 		orderUpdated.OrderStatus = "Pending"
@@ -158,8 +162,17 @@ func (actor *OrderActor) handleAvailabilityChecked(request *messages.CheckAvaila
 func (actor *OrderActor) handlePaymentInfoReceived(request *messages.OrderPaymentInfo) {
 	fmt.Println("Received message from payment actor!")
 
+	loadConfig, err := config.LoadConfig("./..")
+	if err != nil {
+		panic(err)
+	}
+
 	// Spawn the notification actor
-	spawnResponse, err := actor.remoting.SpawnNamed("192.168.193.39:8092", "notification-actor", "notification-actor", time.Second)
+	spawnResponse, err := actor.remoting.SpawnNamed(
+		loadConfig.ActorNotificationAddress+":"+fmt.Sprint(loadConfig.ActorNotificationPort),
+		"notification-actor",
+		"notification-actor",
+		time.Second)
 	if err != nil {
 		panic(err)
 	}
@@ -197,7 +210,15 @@ func (actor *OrderActor) prepareOrder(seconds time.Duration) {
 
 func (actor *OrderActor) processPayment(request *messages.CheckAvailability_Response) {
 	// Spawn the payment actor
-	spawnResponse, err := actor.remoting.SpawnNamed("192.168.193.154:8093", "payment-actor", "payment-actor", 5*time.Second)
+	loadConfig, err := config.LoadConfig("./..")
+	if err != nil {
+		panic(err)
+	}
+
+	spawnResponse, err := actor.remoting.SpawnNamed(loadConfig.ActorPaymentAddress+":"+fmt.Sprint(loadConfig.ActorPaymentPort),
+		"payment-actor",
+		"payment-actor",
+		5*time.Second)
 	if err != nil {
 		panic(err)
 	}
@@ -217,23 +238,18 @@ func (actor *OrderActor) processPayment(request *messages.CheckAvailability_Resp
 	actor.context.Send(spawnResponse.Pid, message)
 }
 
-/*
-Configuration for order-actor:
-  - kind: order-actor
-  - address: 127.0.0.1:8090
-
-In order to works, required configuration for other actors are:
-  - kind: notification-actor, address: 127.0.0.1:8092
-  - kind: inventory-actor, address: 127.0.0.1:8098
-  - kind: payment-actor, address: 127.0.0.1:8093
-*/
 func main() {
 
 	system := actor.NewActorSystem()
 	orderService := service.CreateOrderService()
 
+	loadConfig, err := config.LoadConfig("./..")
+	if err != nil {
+		panic(err)
+	}
+
 	// Configure and start remote communication with actors
-	remoteConfig := remote.Configure("192.168.193.132", 8090)
+	remoteConfig := remote.Configure(loadConfig.ActorOrderAddress, loadConfig.ActorOrderPort)
 	//remoting := remote.NewRemote(system, remoteConfig)
 
 	//remoting.Start()
@@ -243,7 +259,11 @@ func main() {
 	// With automanaged implementation, one must list up all known members at first place to ping each other.
 	// Note that this member itself is not registered as a member member because this only works as a client.
 	lookup := disthash.New()
-	cp := automanaged.NewWithConfig(10*time.Second, 6330, "192.168.193.39:8098", "192.168.193.39:9098", "192.168.193.39:10098")
+	cp := automanaged.NewWithConfig(10*time.Second,
+		6330,
+		loadConfig.ActorInventoryAddress+":"+fmt.Sprint(loadConfig.ActorInventoryPort),
+		loadConfig.ActorInventoryAddress+":"+fmt.Sprint(loadConfig.ActorInventoryPort+1),
+		loadConfig.ActorInventoryAddress+":"+fmt.Sprint(loadConfig.ActorInventoryPort+2))
 	clusterConfig := cluster.Configure("cluster-inventory", cp, lookup, remoteConfig)
 	c := cluster.New(system, clusterConfig)
 	// Start as a client, not as a cluster member.

@@ -8,20 +8,26 @@ import (
 )
 
 type Config struct {
-	Port                   string        `mapstructure:"PORT"`
-	DatabaseURL            string        `mapstructure:"DATABASE_URL"`
-	AccessTokenPrivateKey  string        `mapstructure:"ACCESS_TOKEN_PRIVATE_KEY"`
-	AccessTokenPublicKey   string        `mapstructure:"ACCESS_TOKEN_PUBLIC_KEY"`
-	RefreshTokenPrivateKey string        `mapstructure:"REFRESH_TOKEN_PRIVATE_KEY"`
-	RefreshTokenPublicKey  string        `mapstructure:"REFRESH_TOKEN_PUBLIC_KEY"`
-	AccessTokenExpiresIn   time.Duration `mapstructure:"ACCESS_TOKEN_EXPIRES_IN"`
-	RefreshTokenExpiresIn  time.Duration `mapstructure:"REFRESH_TOKEN_EXPIRES_IN"`
-	AccessTokenMaxAge      int           `mapstructure:"ACCESS_TOKEN_MAXAGE"`
-	RefreshTokenMaxAge     int           `mapstructure:"REFRESH_TOKEN_MAXAGE"`
-	ActorCustomerAddress   string        `mapstructure:"ACTOR_CUSTOMER_ADDRESS"`
-	ActorCustomerPort      int           `mapstructure:"ACTOR_CUSTOMER_PORT"`
-	ActorOrderAddress      string        `mapstructure:"ACTOR_ORDER_ADDRESS"`
-	ActorOrderPort         int           `mapstructure:"ACTOR_ORDER_PORT"`
+	Port                     string        `mapstructure:"PORT"`
+	DatabaseURL              string        `mapstructure:"DATABASE_URL"`
+	AccessTokenPrivateKey    string        `mapstructure:"ACCESS_TOKEN_PRIVATE_KEY"`
+	AccessTokenPublicKey     string        `mapstructure:"ACCESS_TOKEN_PUBLIC_KEY"`
+	RefreshTokenPrivateKey   string        `mapstructure:"REFRESH_TOKEN_PRIVATE_KEY"`
+	RefreshTokenPublicKey    string        `mapstructure:"REFRESH_TOKEN_PUBLIC_KEY"`
+	AccessTokenExpiresIn     time.Duration `mapstructure:"ACCESS_TOKEN_EXPIRES_IN"`
+	RefreshTokenExpiresIn    time.Duration `mapstructure:"REFRESH_TOKEN_EXPIRES_IN"`
+	AccessTokenMaxAge        int           `mapstructure:"ACCESS_TOKEN_MAXAGE"`
+	RefreshTokenMaxAge       int           `mapstructure:"REFRESH_TOKEN_MAXAGE"`
+	ActorCustomerAddress     string        `mapstructure:"ACTOR_CUSTOMER_ADDRESS"`
+	ActorCustomerPort        int           `mapstructure:"ACTOR_CUSTOMER_PORT"`
+	ActorOrderAddress        string        `mapstructure:"ACTOR_ORDER_ADDRESS"`
+	ActorOrderPort           int           `mapstructure:"ACTOR_ORDER_PORT"`
+	ActorNotificationAddress string        `mapstructure:"ACTOR_NOTIFICATION_ADDRESS"`
+	ActorNotificationPort    int           `mapstructure:"ACTOR_NOTIFICATION_PORT"`
+	ActorPaymentAddress      string        `mapstructure:"ACTOR_PAYMENT_ADDRESS"`
+	ActorPaymentPort         int           `mapstructure:"ACTOR_PAYMENT_PORT"`
+	ActorInventoryAddress    string        `mapstructure:"ACTOR_INVENTORY_ADDRESS"`
+	ActorInventoryPort       int           `mapstructure:"ACTOR_INVENTORY_PORT"`
 }
 
 func LoadConfig(path string) (config Config, err error) {
