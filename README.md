@@ -69,7 +69,6 @@ Application uses five different actors (*customer*, *inventory*, *notification*,
 After you install all prerequisites, you need to modify **app.env** file in *Go* subdirectory.
 
 - First, you will enter CockroacDB cloud credentials after you successfully created cluster
-<br>
 - After that, you'll need to genereate private and public keys for access and refresh tokens. In case you don't know how to do that, follow these steps:
   1. Go to Online RSA Key Generator, [e.g.](https://travistidwell.com/jsencrypt/demo/) and generate keys using 4096 bit key size. This process may take a moment, so please be patient while generating the keys.
   2. Once generated, visit [Base64 Encoding Site](https://www.base64encode.org/). Convert both the private and public keys separately to Base64 encoding and enter them as access token in **app.env** file.
