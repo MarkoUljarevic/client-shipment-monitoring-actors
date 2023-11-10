@@ -73,5 +73,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/AT-SmFoYcSNaQ/AT2023/Go/customer => ./customer
-replace github.com/AT-SmFoYcSNaQ/AT2023/Go/order => ./order
+replace github.com/AT-SmFoYcSNaQ/AT2023/Go/customer => ../customer

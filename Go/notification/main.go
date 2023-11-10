@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/AT-SmFoYcSNaQ/AT2023/Go/customer/config"
 	"github.com/AT-SmFoYcSNaQ/AT2023/Go/notification/messages"
 	"github.com/AT-SmFoYcSNaQ/AT2023/Go/notification/socket"
 	"github.com/asynkron/protoactor-go/actor"

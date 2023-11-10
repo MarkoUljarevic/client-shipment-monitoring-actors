@@ -2,7 +2,7 @@ package service
 
 import (
 	"github.com/AT-SmFoYcSNaQ/AT2023/Go/customer/config"
-	"github.com/AT-SmFoYcSNaQ/AT2023/Go/order/model"
+	"github.com/MarkoUljarevic/client-shipment-monitoring-actors/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

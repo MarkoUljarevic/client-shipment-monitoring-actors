@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"strconv"
 	"time"
 
 	"github.com/AT-SmFoYcSNaQ/AT2023/Go/inventory/messages"
@@ -162,16 +161,9 @@ func main() {
 		panic(err)
 	}
 
-	port := 80104
-	port1 := 8098
-	if len(os.Args) >= 2 {
-		port, _ = strconv.Atoi(os.Args[1])
-		port1, _ = strconv.Atoi(os.Args[2])
-	}
+	remoteConfig := remote.Configure(loadConfig.ActorInventoryAddress, loadConfig.ActorInventoryPort+5)
 
-	remoteConfig := remote.Configure(loadConfig.ActorInventoryAddress, port)
-
-	cp := automanaged.NewWithConfig(5*time.Second, port1,
+	cp := automanaged.NewWithConfig(5*time.Second, loadConfig.ActorInventoryPort,
 		loadConfig.ActorInventoryAddress+":"+fmt.Sprint(loadConfig.ActorInventoryPort),
 		loadConfig.ActorInventoryAddress+":"+fmt.Sprint(loadConfig.ActorInventoryPort+1),
 		loadConfig.ActorInventoryAddress+":"+fmt.Sprint(loadConfig.ActorInventoryPort+2))

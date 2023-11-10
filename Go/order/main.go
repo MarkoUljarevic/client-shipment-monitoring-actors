@@ -3,15 +3,15 @@ package main
 import (
 	"fmt"
 	"github.com/AT-SmFoYcSNaQ/AT2023/Go/customer/config"
+	"github.com/MarkoUljarevic/client-shipment-monitoring-actors/messages"
+	"github.com/MarkoUljarevic/client-shipment-monitoring-actors/model"
+	"github.com/MarkoUljarevic/client-shipment-monitoring-actors/service"
 	"time"
 
-	"github.com/AT-SmFoYcSNaQ/AT2023/Go/order/model"
 	"github.com/asynkron/protoactor-go/cluster"
 	"github.com/asynkron/protoactor-go/cluster/clusterproviders/automanaged"
 	"github.com/asynkron/protoactor-go/cluster/identitylookup/disthash"
 
-	"github.com/AT-SmFoYcSNaQ/AT2023/Go/order/messages"
-	"github.com/AT-SmFoYcSNaQ/AT2023/Go/order/service"
 	console "github.com/asynkron/goconsole"
 	"github.com/asynkron/protoactor-go/actor"
 	"github.com/asynkron/protoactor-go/remote"
@@ -260,7 +260,7 @@ func main() {
 	// Note that this member itself is not registered as a member member because this only works as a client.
 	lookup := disthash.New()
 	cp := automanaged.NewWithConfig(10*time.Second,
-		6330,
+		loadConfig.ActorInventoryPort,
 		loadConfig.ActorInventoryAddress+":"+fmt.Sprint(loadConfig.ActorInventoryPort),
 		loadConfig.ActorInventoryAddress+":"+fmt.Sprint(loadConfig.ActorInventoryPort+1),
 		loadConfig.ActorInventoryAddress+":"+fmt.Sprint(loadConfig.ActorInventoryPort+2))

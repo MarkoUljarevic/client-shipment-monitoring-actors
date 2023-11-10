@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/AT-SmFoYcSNaQ/AT2023/Go/customer/config"
 	messages "github.com/AT-SmFoYcSNaQ/AT2023/Go/payment/messages/proto"
 	console "github.com/asynkron/goconsole"
 	"github.com/asynkron/protoactor-go/actor"
@@ -90,6 +91,11 @@ func (actor *PaymentActor) sendPaymentInfoNotification(paymentReq PaymentReq, is
 		paymentMessage = fmt.Sprintf("Payment for orderId %s was successful! New account balance is %.2f", paymentReq.OrderId, paymentReq.AccountBalance)
 	} else {
 		paymentMessage = fmt.Sprintf("Payment for orderId %s was not successful,account balance did not change.", paymentReq.OrderId)
+	}
+
+	loadConfig, err := config.LoadConfig("./..")
+	if err != nil {
+		panic(err)
 	}
 
 	spawnResponse, err := actor.remoting.SpawnNamed(loadConfig.ActorNotificationAddress+":"+fmt.Sprint(loadConfig.ActorNotificationPort),
