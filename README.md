@@ -1,6 +1,6 @@
 <h1 align="center">
   <a href="https://github.com/MarkoUljarevic/client-shipment-monitoring-actors">
-  Client shipment monitoring
+  Ordering and Shipment Monitoring
   </a>
 </h1>
 
