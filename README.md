@@ -26,7 +26,7 @@
 ---
 
 ## About
-This project was developed as a part of the Distributed Artificial Intelligence and Intelligent Agents course at the Faculty of Techical Sciences in a team of 5 people. The idea of this project was to create a distributed actor system where actors communicate from different computers in the network to solve tasks. We designed a simple yet effective system for tracking the flow of orders to demonstrate the work of actors.
+This project was developed as a part of the Distributed Artificial Intelligence and Intelligent Agents course at the Faculty of Technical Sciences in a team of 5 people. The idea of this project was to create a distributed actor system where actors communicate from different computers in the network to solve tasks. We designed a simple yet effective system for tracking the flow of orders to demonstrate the work of actors.
 <br>
 
 Application uses five different actors (*customer*, *inventory*, *notification*, *order* and *payment*) where customer actor not only handles customer-related tasks but also functions as an HTTP server to interact with client. Due to the assumption that most resource-intensive operations will be related to inventory management, inventory actor is designed as a cluster of three actors. This cluster is optimized to handle high-demand tasks efficiently.
