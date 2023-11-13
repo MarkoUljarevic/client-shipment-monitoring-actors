@@ -41,7 +41,7 @@ Application uses five different actors (*customer*, *inventory*, *notification*,
 
 | Ordering Process | Actors Consoles |
 | :-: | :-: |
-| <img src="images/ordering_process.png" title="Home Page" width="100%"> | <img src="images/consoles.png" title="Login Page" width="100%"> |
+| <img src="images/ordering_process.png" title="Ordering Process" width="100%"> | <img src="images/consoles.png" title="Actors Consoles" width="100%"> |
 
 </details>
 
